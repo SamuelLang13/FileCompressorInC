@@ -27,38 +27,79 @@ FILE*readFile(){
     FILE*file;
     char*fileName;
     int input = 0;
-    printf("Zadajte nazov vstupneho subora:\n");
     char character;
     int cnt = 0;
     int max = 10;
+    //Initial malloc for char
     fileName = (char*)malloc(max*sizeof(char));
+    printf("Zadajte subora:\n");
     while ((input=scanf("%c",&character))==1 && character!='\0')
     {
+        //Reallocing char
         if(cnt>=max){
             max*=max*1.5;
             fileName=(char*)realloc(fileName,max*sizeof(char));
+            if(fileName==NULL){
+                return NULL;
+            }
         }
         fileName[cnt]=character;
         cnt++;
     }
+    //If something went wrong during reading input and its not EOF return NULL
     if(input!=EOF){
         return NULL;
     }
-    printf("%s\n",fileName);
-    
-
+    file = fopen(fileName,"r");
+    //If file does not exist return NULL
+    if(file==NULL){
+        return NULL;
+    }
     return file;
 }
 
+int readOperation(){
+    int operation = 0;
+    printf("1-Kompresia\n");
+    printf("2-Dekompresia\n");
+    printf("Zadajte operaciu:\n");
+    if(scanf("%d",&operation)!=1 && (operation!=1 || operation!=2)){
+        return -1;
+    }
+    else{
+        return operation;
+    }
+}
 
 int main(void){
 
     FILE*inputFile = readFile();
-    FILE*outputFile = readFile();
-    if(inputFile==NULL || outputFile==NULL){
+    if(inputFile==NULL){
         printf("Nespravny vstup.\n");
         return 1;
     }
+    FILE*outputFile = readFile();
+    if(outputFile==NULL){
+        printf("Nespravny vstup.\n");
+        return 1;
+    }
+    switch (readOperation())
+    {
+        case 1:{
+            printf("Kompresia dat\n");
+            break;
+        }
+        case 2:{
+            printf("Dekompresia dat\n");
+            break;
+        }
+        
+        default:{
+            printf("Nespravna operacia.\n");
+            return -1;
+        }
+    }
+
 
     return 0;
 }
